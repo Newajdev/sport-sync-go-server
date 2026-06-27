@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"spotsync/internal/domain/reservation/dto"
+	"spotsync/internal/domain/user"
 	"spotsync/internal/domain/zone"
 
 	"gorm.io/gorm"
@@ -21,6 +22,7 @@ type Reservation struct {
 	ZoneID       uint      `json:"zone_id" gorm:"not null"`
 	LicensePlate string    `json:"license_plate" gorm:"type:varchar(15);not null"`
 	Status       string    `json:"status" gorm:"type:varchar(50);not null;default:active"`
+	User         user.User `json:"user,omitempty" gorm:"foreignKey:UserID"`
 	Zone         zone.Zone `json:"zone,omitempty" gorm:"foreignKey:ZoneID"`
 }
 
