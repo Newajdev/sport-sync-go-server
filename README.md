@@ -15,7 +15,7 @@ Built with Echo, GORM, PostgreSQL, JWT authentication, and role-based access (`d
 ## Tech Stack
 
 - Go 1.22+
-- Echo v4 (`github.com/labstack/echo/v4`)
+- Echo v5 (`github.com/labstack/echo/v5`)
 - GORM + PostgreSQL
 - JWT (`github.com/golang-jwt/jwt/v5`)
 - bcrypt password hashing

@@ -8,7 +8,7 @@ import (
 	"spotsync/internal/domain/zone/dto"
 	"spotsync/internal/httpresponse"
 
-	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v5"
 )
 
 type handler struct {
@@ -19,7 +19,7 @@ func NewHandler(service *service) *handler {
 	return &handler{service: service}
 }
 
-func (h *handler) Create(c echo.Context) error {
+func (h *handler) Create(c *echo.Context) error {
 	var req dto.CreateRequest
 
 	if err := c.Bind(&req); err != nil {
@@ -47,7 +47,7 @@ func (h *handler) Create(c echo.Context) error {
 	return c.JSON(http.StatusCreated, httpresponse.OK("Parking zone created successfully", response))
 }
 
-func (h *handler) GetAll(c echo.Context) error {
+func (h *handler) GetAll(c *echo.Context) error {
 	zones, err := h.service.GetZones()
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, httpresponse.Fail(
@@ -59,7 +59,7 @@ func (h *handler) GetAll(c echo.Context) error {
 	return c.JSON(http.StatusOK, httpresponse.OK("Parking zones retrieved successfully", zones))
 }
 
-func (h *handler) GetByID(c echo.Context) error {
+func (h *handler) GetByID(c *echo.Context) error {
 	id, err := strconv.ParseUint(c.Param("id"), 10, 64)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, httpresponse.Fail(

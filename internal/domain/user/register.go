@@ -4,7 +4,7 @@ import (
 	"spotsync/internal/auth"
 	"spotsync/internal/config"
 
-	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v5"
 	"gorm.io/gorm"
 )
 

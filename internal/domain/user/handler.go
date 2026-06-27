@@ -6,7 +6,7 @@ import (
 	"spotsync/internal/domain/user/dto"
 	"spotsync/internal/httpresponse"
 
-	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v5"
 )
 
 type handler struct {
@@ -17,7 +17,7 @@ func NewHandler(service *service) *handler {
 	return &handler{service: service}
 }
 
-func (h *handler) Register(c echo.Context) error {
+func (h *handler) Register(c *echo.Context) error {
 	var req dto.RegisterRequest
 
 	if err := c.Bind(&req); err != nil {
@@ -52,7 +52,7 @@ func (h *handler) Register(c echo.Context) error {
 	return c.JSON(http.StatusCreated, httpresponse.OK("User registered successfully", response))
 }
 
-func (h *handler) Login(c echo.Context) error {
+func (h *handler) Login(c *echo.Context) error {
 	var req dto.LoginRequest
 
 	if err := c.Bind(&req); err != nil {

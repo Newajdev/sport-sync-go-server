@@ -9,7 +9,7 @@ import (
 	"spotsync/internal/domain/zone"
 	"spotsync/internal/httpresponse"
 
-	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v5"
 )
 
 type handler struct {
@@ -20,12 +20,12 @@ func NewHandler(service *service) *handler {
 	return &handler{service: service}
 }
 
-func getCurrentUserID(c echo.Context) (uint, bool) {
+func getCurrentUserID(c *echo.Context) (uint, bool) {
 	userID, ok := c.Get("user_id").(uint)
 	return userID, ok
 }
 
-func reservationErrorResponse(c echo.Context, err error) error {
+func reservationErrorResponse(c *echo.Context, err error) error {
 	if errors.Is(err, ErrReservationNotFound) {
 		return c.JSON(http.StatusNotFound, httpresponse.Fail(
 			"Reservation not found",
@@ -67,7 +67,7 @@ func reservationErrorResponse(c echo.Context, err error) error {
 	))
 }
 
-func (h *handler) Create(c echo.Context) error {
+func (h *handler) Create(c *echo.Context) error {
 	userID, ok := getCurrentUserID(c)
 	if !ok {
 		return c.JSON(http.StatusUnauthorized, httpresponse.Fail(
@@ -99,7 +99,7 @@ func (h *handler) Create(c echo.Context) error {
 	return c.JSON(http.StatusCreated, httpresponse.OK("Reservation confirmed successfully", response))
 }
 
-func (h *handler) GetMyReservations(c echo.Context) error {
+func (h *handler) GetMyReservations(c *echo.Context) error {
 	userID, ok := getCurrentUserID(c)
 	if !ok {
 		return c.JSON(http.StatusUnauthorized, httpresponse.Fail(
@@ -116,7 +116,7 @@ func (h *handler) GetMyReservations(c echo.Context) error {
 	return c.JSON(http.StatusOK, httpresponse.OK("My reservations retrieved successfully", reservations))
 }
 
-func (h *handler) Cancel(c echo.Context) error {
+func (h *handler) Cancel(c *echo.Context) error {
 	userID, ok := getCurrentUserID(c)
 	if !ok {
 		return c.JSON(http.StatusUnauthorized, httpresponse.Fail(
@@ -140,7 +140,7 @@ func (h *handler) Cancel(c echo.Context) error {
 	return c.JSON(http.StatusOK, httpresponse.OK("Reservation cancelled successfully", nil))
 }
 
-func (h *handler) GetAll(c echo.Context) error {
+func (h *handler) GetAll(c *echo.Context) error {
 	reservations, err := h.service.GetAllReservations()
 	if err != nil {
 		return reservationErrorResponse(c, err)
