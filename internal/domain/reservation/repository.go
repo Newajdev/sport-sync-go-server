@@ -10,8 +10,10 @@ import (
 )
 
 var (
-	ErrReservationNotFound = errors.New("reservation not found")
-	ErrZoneFull            = errors.New("zone is at full capacity")
+	ErrReservationNotFound         = errors.New("reservation not found")
+	ErrZoneFull                    = errors.New("zone is at full capacity")
+	ErrForbiddenReservationAccess  = errors.New("you do not own this reservation")
+	ErrReservationAlreadyCancelled = errors.New("reservation already cancelled")
 )
 
 type Repository interface {
@@ -21,7 +23,7 @@ type Repository interface {
 	Update(reservation *Reservation) error
 	GetAll() ([]*Reservation, error)
 	CountActiveByZoneID(zoneID uint) (int64, error)
-	CreateWithCapacityCheck(userID, zoneID uint, licensePlate string) (*Reservation, error)
+	CreateWithCapacityCheck(userID uint, zoneID uint, licensePlate string) (*Reservation, error)
 }
 
 type repository struct {
@@ -89,7 +91,7 @@ func (r *repository) CountActiveByZoneID(zoneID uint) (int64, error) {
 	return count, nil
 }
 
-func (r *repository) CreateWithCapacityCheck(userID, zoneID uint, licensePlate string) (*Reservation, error) {
+func (r *repository) CreateWithCapacityCheck(userID uint, zoneID uint, licensePlate string) (*Reservation, error) {
 	var reservation Reservation
 
 	err := r.db.Transaction(func(tx *gorm.DB) error {

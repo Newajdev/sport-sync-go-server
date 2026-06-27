@@ -54,3 +54,31 @@ func (r *Reservation) ToMyReservationResponse() *dto.MyReservationResponse {
 	}
 	return resp
 }
+
+func (r *Reservation) ToAdminResponse() *dto.AdminResponse {
+	resp := &dto.AdminResponse{
+		ID:           r.ID,
+		UserID:       r.UserID,
+		ZoneID:       r.ZoneID,
+		LicensePlate: r.LicensePlate,
+		Status:       r.Status,
+		CreatedAt:    r.CreatedAt.Format(time.RFC3339),
+		UpdatedAt:    r.UpdatedAt.Format(time.RFC3339),
+	}
+	if r.User.ID != 0 {
+		resp.User = dto.UserSummary{
+			ID:    r.User.ID,
+			Name:  r.User.Name,
+			Email: r.User.Email,
+			Role:  r.User.Role,
+		}
+	}
+	if r.Zone.ID != 0 {
+		resp.Zone = dto.ZoneSummary{
+			ID:   r.Zone.ID,
+			Name: r.Zone.Name,
+			Type: r.Zone.Type,
+		}
+	}
+	return resp
+}
