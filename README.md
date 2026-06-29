@@ -152,6 +152,12 @@ Errors:
 { "success": false, "message": "...", "errors": "..." }
 ```
 
+Protected routes require the header:
+
+```text
+Authorization: Bearer <token>
+```
+
 | Method | Path | Access |
 |--------|------|--------|
 | POST | `/api/v1/auth/register` | Public |
@@ -164,80 +170,311 @@ Errors:
 | DELETE | `/api/v1/reservations/:id` | Auth (own reservation) |
 | GET | `/api/v1/reservations` | Admin |
 
-### Register
+---
 
-```bash
-curl -X POST http://localhost:8080/api/v1/auth/register \
-  -H "Content-Type: application/json" \
-  -d '{"name":"John Doe","email":"john@spotsync.com","password":"securePassword123","role":"driver"}'
+### Register User
+
+**Endpoint:** `POST /api/v1/auth/register`
+
+**Access:** Public
+
+**Request Body**
+
+```json
+{
+  "name": "John Doe",
+  "email": "john@spotsync.com",
+  "password": "securePassword123",
+  "role": "driver"
+}
 ```
+
+**Success Response (201 Created)**
+
+```json
+{
+  "success": true,
+  "message": "User registered successfully",
+  "data": {
+    "id": 1,
+    "name": "John Doe",
+    "email": "john@spotsync.com",
+    "role": "driver",
+    "created_at": "2026-06-20T15:30:00Z",
+    "updated_at": "2026-06-20T15:30:00Z"
+  }
+}
+```
+
+---
 
 ### Login
 
-```bash
-curl -X POST http://localhost:8080/api/v1/auth/login \
-  -H "Content-Type: application/json" \
-  -d '{"email":"john@spotsync.com","password":"securePassword123"}'
+**Endpoint:** `POST /api/v1/auth/login`
+
+**Access:** Public
+
+**Request Body**
+
+```json
+{
+  "email": "john@spotsync.com",
+  "password": "securePassword123"
+}
 ```
 
-Save the `token` from the response for protected routes.
+**Success Response (200 OK)**
 
-### Create Zone (admin)
-
-```bash
-curl -X POST http://localhost:8080/api/v1/zones \
-  -H "Authorization: Bearer YOUR_TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{"name":"Terminal 1 EV Charging","type":"ev_charging","total_capacity":20,"price_per_hour":5.50}'
+```json
+{
+  "success": true,
+  "message": "Login successful",
+  "data": {
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+    "user": {
+      "id": 1,
+      "name": "John Doe",
+      "email": "john@spotsync.com",
+      "role": "driver"
+    }
+  }
+}
 ```
+
+---
+
+### Create Zone
+
+**Endpoint:** `POST /api/v1/zones`
+
+**Access:** Admin
+
+**Request Body**
+
+```json
+{
+  "name": "Terminal 1 EV Charging",
+  "type": "ev_charging",
+  "total_capacity": 20,
+  "price_per_hour": 5.50
+}
+```
+
+**Success Response (201 Created)**
+
+```json
+{
+  "success": true,
+  "message": "Parking zone created successfully",
+  "data": {
+    "id": 5,
+    "name": "Terminal 1 EV Charging",
+    "type": "ev_charging",
+    "total_capacity": 20,
+    "price_per_hour": 5.50,
+    "created_at": "2026-06-20T15:30:00Z",
+    "updated_at": "2026-06-20T15:30:00Z"
+  }
+}
+```
+
+---
 
 ### List Zones
 
-```bash
-curl http://localhost:8080/api/v1/zones
+**Endpoint:** `GET /api/v1/zones`
+
+**Access:** Public
+
+**Request Body**
+
+None
+
+**Success Response (200 OK)**
+
+```json
+{
+  "success": true,
+  "message": "Parking zones retrieved successfully",
+  "data": [
+    {
+      "id": 5,
+      "name": "Terminal 1 EV Charging",
+      "type": "ev_charging",
+      "total_capacity": 20,
+      "available_spots": 15,
+      "price_per_hour": 5.50,
+      "created_at": "2026-06-20T15:30:00Z",
+      "updated_at": "2026-06-20T15:30:00Z"
+    }
+  ]
+}
 ```
+
+---
+
+### Get Zone by ID
+
+**Endpoint:** `GET /api/v1/zones/:id`
+
+**Access:** Public
+
+**Request Body**
+
+None
+
+**Success Response (200 OK)**
+
+```json
+{
+  "success": true,
+  "message": "Parking zone retrieved successfully",
+  "data": {
+    "id": 5,
+    "name": "Terminal 1 EV Charging",
+    "type": "ev_charging",
+    "total_capacity": 20,
+    "available_spots": 15,
+    "price_per_hour": 5.50,
+    "created_at": "2026-06-20T15:30:00Z",
+    "updated_at": "2026-06-20T15:30:00Z"
+  }
+}
+```
+
+---
 
 ### Create Reservation
 
-```bash
-curl -X POST http://localhost:8080/api/v1/reservations \
-  -H "Authorization: Bearer YOUR_TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{"zone_id":1,"license_plate":"ABC-1234"}'
+**Endpoint:** `POST /api/v1/reservations`
+
+**Access:** Auth (driver, admin)
+
+**Request Body**
+
+```json
+{
+  "zone_id": 5,
+  "license_plate": "ABC-1234"
+}
 ```
+
+**Success Response (201 Created)**
+
+```json
+{
+  "success": true,
+  "message": "Reservation confirmed successfully",
+  "data": {
+    "id": 105,
+    "user_id": 1,
+    "zone_id": 5,
+    "license_plate": "ABC-1234",
+    "status": "active",
+    "created_at": "2026-06-20T15:30:00Z",
+    "updated_at": "2026-06-20T15:30:00Z"
+  }
+}
+```
+
+---
 
 ### My Reservations
 
-```bash
-curl http://localhost:8080/api/v1/reservations/my-reservations \
-  -H "Authorization: Bearer YOUR_TOKEN"
+**Endpoint:** `GET /api/v1/reservations/my-reservations`
+
+**Access:** Auth
+
+**Request Body**
+
+None
+
+**Success Response (200 OK)**
+
+```json
+{
+  "success": true,
+  "message": "My reservations retrieved successfully",
+  "data": [
+    {
+      "id": 105,
+      "license_plate": "ABC-1234",
+      "status": "active",
+      "zone": {
+        "id": 5,
+        "name": "Terminal 1 EV Charging",
+        "type": "ev_charging"
+      },
+      "created_at": "2026-06-20T15:30:00Z"
+    }
+  ]
+}
 ```
+
+---
 
 ### Cancel Reservation
 
-```bash
-curl -X DELETE http://localhost:8080/api/v1/reservations/1 \
-  -H "Authorization: Bearer YOUR_TOKEN"
+**Endpoint:** `DELETE /api/v1/reservations/:id`
+
+**Access:** Auth (own reservation only)
+
+**Request Body**
+
+None
+
+**Success Response (200 OK)**
+
+```json
+{
+  "success": true,
+  "message": "Reservation cancelled successfully",
+  "data": null
+}
 ```
 
-### All Reservations (admin)
+---
 
-```bash
-curl http://localhost:8080/api/v1/reservations \
-  -H "Authorization: Bearer ADMIN_TOKEN"
+### All Reservations (Admin)
+
+**Endpoint:** `GET /api/v1/reservations`
+
+**Access:** Admin
+
+**Request Body**
+
+None
+
+**Success Response (200 OK)**
+
+```json
+{
+  "success": true,
+  "message": "Reservations retrieved successfully",
+  "data": [
+    {
+      "id": 105,
+      "user_id": 1,
+      "zone_id": 5,
+      "license_plate": "ABC-1234",
+      "status": "active",
+      "user": {
+        "id": 1,
+        "name": "John Doe",
+        "email": "john@spotsync.com",
+        "role": "driver"
+      },
+      "zone": {
+        "id": 5,
+        "name": "Terminal 1 EV Charging",
+        "type": "ev_charging"
+      },
+      "created_at": "2026-06-20T15:30:00Z",
+      "updated_at": "2026-06-20T15:30:00Z"
+    }
+  ]
+}
 ```
-
-## Concurrency
-
-Reservation creation uses a database transaction with a row-level lock (`FOR UPDATE`) on the parking zone. This prevents two drivers from booking the last available EV spot at the same time.
-
-## Database Tables
-
-GORM `AutoMigrate` creates these tables on startup:
-
-- `users`
-- `zones`
-- `reservations`
 
 # admin
 ```bash
