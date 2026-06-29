@@ -70,7 +70,7 @@ func (r *Reservation) ToAdminResponse() *dto.AdminResponse {
 			ID:    r.User.ID,
 			Name:  r.User.Name,
 			Email: r.User.Email,
-			Role:  r.User.Role,
+			Role:  r.User.Role.String(),
 		}
 	}
 	if r.Zone.ID != 0 {

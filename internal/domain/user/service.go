@@ -19,9 +19,9 @@ func NewService(repo Repository, jwtService auth.JWTService) *service {
 }
 
 func (s *service) Register(req dto.RegisterRequest) (*dto.Response, error) {
-	role := req.Role
-	if role == "" {
-		role = "driver"
+	role := RoleDriver
+	if req.Role != "" {
+		role = Role(req.Role)
 	}
 
 	user := User{
@@ -55,7 +55,7 @@ func (s *service) Login(req dto.LoginRequest) (*dto.LoginResponse, error) {
 		return nil, ErrInvalidCredentials
 	}
 
-	token, err := s.jwtService.GenerateToken(user.ID, user.Email, user.Name, user.Role)
+	token, err := s.jwtService.GenerateToken(user.ID, user.Email, user.Name, user.Role.String())
 	if err != nil {
 		return nil, fmt.Errorf("failed to generate token: %w", err)
 	}
@@ -71,7 +71,7 @@ func userToResponse(user *User) *dto.Response {
 		ID:        user.ID,
 		Name:      user.Name,
 		Email:     user.Email,
-		Role:      user.Role,
+		Role:      user.Role.String(),
 		CreatedAt: user.CreatedAt.Format(time.RFC3339),
 		UpdatedAt: user.UpdatedAt.Format(time.RFC3339),
 	}
