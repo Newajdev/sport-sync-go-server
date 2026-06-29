@@ -14,11 +14,11 @@ Built with Echo, GORM, PostgreSQL, JWT authentication, and role-based access (`d
 
 ## Tech Stack
 
-- Go 1.22+
-- Echo v5 (`github.com/labstack/echo/v5`)
+- Go 
+- Echo 
 - GORM + PostgreSQL
-- JWT (`github.com/golang-jwt/jwt/v5`)
-- bcrypt password hashing
+- JWT 
+- bcrypt
 - go-playground/validator
 
 ## Project Structure
@@ -68,7 +68,7 @@ POST /api/v1/reservations
 
 ## Requirements
 
-- Go 1.22 or higher
+- Go
 - PostgreSQL
 - Git
 
@@ -77,7 +77,7 @@ POST /api/v1/reservations
 1. Clone the repository and enter the project directory:
 
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/Newajdev/sport-sync-go-server.git
 cd sport-sync
 ```
 
@@ -113,13 +113,11 @@ Start the server:
 
 ```bash
 go run cmd/main.go
-```
-
-Or use Air for hot reload:
-
-```bash
+or
 air
 ```
+
+
 
 Health check:
 
@@ -136,16 +134,9 @@ running
 ## Build
 
 ```bash
-go build -o bin/spotsync ./cmd/main.go
+go build -o server ./cmd/main.go
 ```
 
-Before deploying, run:
-
-```bash
-go mod tidy
-go vet ./...
-go test ./...
-```
 
 ## API Endpoints
 
@@ -248,31 +239,16 @@ GORM `AutoMigrate` creates these tables on startup:
 - `zones`
 - `reservations`
 
-## Common Problems
-
-### Database connection failed
-
-- Confirm PostgreSQL is running
-- Check database name, username, password, and port in `DSN`
-
-### 401 Unauthorized on protected routes
-
-Send the JWT from login in the header:
-
-```text
-Authorization: Bearer YOUR_TOKEN
+# admin
+```bash
+ADMIN EMAIL= admin@spotsync.com
+ADMIN PASSWORD= admin123456
+ADMIN NAME= SpotSync Admin
 ```
 
-### 403 Forbidden
-
-- Admin-only routes require a user with `role: "admin"`
-- Drivers can only cancel their own reservations
-
-## Suggested Learning Path
-
-1. `cmd/main.go`
-2. `internal/config/`
-3. `internal/server/http.go`
-4. `internal/domain/user/`
-5. `internal/domain/zone/`
-6. `internal/domain/reservation/`
+# driver
+```bash
+ADMIN EMAIL= system.driver@spotsync.com
+ADMIN PASSWORD= driver123456
+ADMIN NAME= System Driver
+```
